@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_14_232306) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_14_232430) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -148,7 +148,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_14_232306) do
     t.bigint "flight_id", null: false
     t.integer "layover_in_minutes", null: false
     t.bigint "origin_airport_id", null: false
-    t.bigint "original_terminal_id"
+    t.bigint "origin_terminal_id"
     t.datetime "scheduled_arrival", null: false
     t.datetime "scheduled_departure", null: false
     t.integer "sequence", null: false
@@ -158,7 +158,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_14_232306) do
     t.index ["flight_id", "sequence"], name: "index_routes_on_flight_id_and_sequence", unique: true
     t.index ["flight_id"], name: "index_routes_on_flight_id"
     t.index ["origin_airport_id"], name: "index_routes_on_origin_airport_id"
-    t.index ["original_terminal_id"], name: "index_routes_on_original_terminal_id"
+    t.index ["origin_terminal_id"], name: "index_routes_on_origin_terminal_id"
   end
 
   create_table "seats", force: :cascade do |t|
@@ -240,7 +240,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_14_232306) do
   add_foreign_key "routes", "airports", column: "origin_airport_id"
   add_foreign_key "routes", "flights"
   add_foreign_key "routes", "terminals", column: "destination_terminal_id"
-  add_foreign_key "routes", "terminals", column: "original_terminal_id"
+  add_foreign_key "routes", "terminals", column: "origin_terminal_id"
   add_foreign_key "seats", "airplanes"
   add_foreign_key "sessions", "users"
   add_foreign_key "terminals", "airports"
