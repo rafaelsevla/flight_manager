@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_14_232716) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_14_233615) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -141,6 +141,33 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_14_232716) do
     t.index ["origin_terminal_id"], name: "index_flights_on_origin_terminal_id"
   end
 
+  create_table "group_permissions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "group_id", null: false
+    t.bigint "permission_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["group_id", "permission_id"], name: "index_group_permissions_on_group_id_and_permission_id", unique: true
+    t.index ["group_id"], name: "index_group_permissions_on_group_id"
+    t.index ["permission_id"], name: "index_group_permissions_on_permission_id"
+  end
+
+  create_table "groups", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name"
+    t.datetime "updated_at", null: false
+    t.uuid "uuid"
+    t.index ["name"], name: "index_groups_on_name", unique: true
+    t.index ["uuid"], name: "index_groups_on_uuid", unique: true
+  end
+
+  create_table "permissions", force: :cascade do |t|
+    t.string "action"
+    t.datetime "created_at", null: false
+    t.string "resource"
+    t.datetime "updated_at", null: false
+    t.index ["resource", "action"], name: "index_permissions_on_resource_and_action", unique: true
+  end
+
   create_table "routes", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.bigint "destination_airport_id", null: false
@@ -206,6 +233,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_14_232716) do
     t.index ["user_id"], name: "index_transactions_on_user_id"
   end
 
+  create_table "user_groups", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "group_id", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["group_id"], name: "index_user_groups_on_group_id"
+    t.index ["user_id"], name: "index_user_groups_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.bigint "address_id", null: false
     t.date "born_date", null: false
@@ -236,6 +272,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_14_232716) do
   add_foreign_key "flights", "airports", column: "origin_airport_id"
   add_foreign_key "flights", "terminals", column: "destination_terminal_id"
   add_foreign_key "flights", "terminals", column: "origin_terminal_id"
+  add_foreign_key "group_permissions", "groups"
+  add_foreign_key "group_permissions", "permissions"
   add_foreign_key "routes", "airports", column: "destination_airport_id"
   add_foreign_key "routes", "airports", column: "origin_airport_id"
   add_foreign_key "routes", "flights"
@@ -246,5 +284,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_14_232716) do
   add_foreign_key "terminals", "airports"
   add_foreign_key "transactions", "bookings"
   add_foreign_key "transactions", "users"
+  add_foreign_key "user_groups", "groups"
+  add_foreign_key "user_groups", "users"
   add_foreign_key "users", "addresses"
 end
